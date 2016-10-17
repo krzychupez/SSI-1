@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AJAX and JQuery ;)</title>
+
+
+<script type="text/javascript" lang="JavaScript">
+	var xMLHttpRequest = new XMLHttpRequest();
+	
+	function find() {
+		
+		xMLHttpRequest.open("Get", "/SSI-1/Cars?company="
+				+ document.getElementById("company").value, true);
+		xMLHttpRequest.onreadystatechange = process;
+		xMLHttpRequest.send(null);
+	}
+	
+	function process() {
+		if (xMLHttpRequest.readyState === XMLHttpRequest.DONE
+				&& xMLHttpRequest.status === 200) {
+			
+			/**
+			* Parse JSON
+			**/
+			var JSONCarsObject = eval('(' + xMLHttpRequest.responseText + ')');
+			var table = document.getElementById("table");
+			
+			/**
+			* Cleaning table
+			**/
+			table.innerHTML = "";
+
+			/**
+			* Header of table
+			**/
+			var headrow = table.insertRow(0);
+			var headcell = headrow.insertCell(0);
+			headcell.innerHTML = JSONCarsObject.nameCompany.name + ":";
+			
+			/**
+			* Table with car names
+			**/
+			var cars = JSONCarsObject.nameCompany.cars;
+			
+			/**
+			* Parse to HTML table
+			**/
+			var i = 0;
+			while (i < cars.length) {
+				row = table.insertRow(i + 1);
+				cell = row.insertCell(0);
+				cell.innerHTML = cars[i++].name;
+			}
+		}
+	}
+</script>
+</head>
+
+<body>
+<p>AJAX to find cars name for companies: Honda, Renault, Peugeot</p>
+
+	<input type="text" id="company" size="20">
+	<button type="button" onclick='find()'>Find</button>
+	<br />
+	<br>
+	<table id="table"></table>
+
+</body>
+</html>
